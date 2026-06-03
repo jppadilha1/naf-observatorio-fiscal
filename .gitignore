@@ -1,0 +1,42 @@
+# Dependências
+node_modules/
+
+# Build Angular
+dist/
+out-tsc/
+.angular/
+
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+secrets.json
+
+# Dados brutos (podem ser grandes ou sensíveis)
+data/raw/
+data/*.csv
+data/*.xlsx
+data/*.xls
+
+# Logs
+*.log
+npm-debug.log*
+
+# SO e editores
+.DS_Store
+Thumbs.db
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Cache
+.cache/
+.npm/
+.eslintcache
+
+# Testes
+coverage/

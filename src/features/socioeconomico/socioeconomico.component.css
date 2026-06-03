@@ -1,0 +1,95 @@
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1e3a5f;
+}
+
+.subtitle {
+  margin-top: 0.25rem;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.source {
+  margin-top: 0.25rem;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.aviso-banner {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  margin-bottom: 1.5rem;
+}
+
+.kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111827;
+  margin-top: 0.25rem;
+}
+
+.kpi-ano {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.125rem;
+}
+
+.kpi-variacao {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.positivo { color: #059669; }
+.negativo { color: #dc2626; }
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.chart-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.chart-card h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+}

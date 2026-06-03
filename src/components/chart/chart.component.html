@@ -1,0 +1,12 @@
+@if (loading) {
+  <div class="chart-overlay">
+    <div class="spinner"></div>
+  </div>
+} @else if (error) {
+  <div class="chart-overlay chart-error">
+    <span class="error-icon">⚠️</span>
+    <p>{{ error }}</p>
+  </div>
+} @else {
+  <div echarts [options]="option" [autoResize]="true" class="chart-container"></div>
+}

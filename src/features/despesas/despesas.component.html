@@ -1,0 +1,19 @@
+<div class="page-header">
+  <h1>Despesas por Função</h1>
+  <p class="subtitle">Distribuição do orçamento municipal por área de atuação</p>
+  <p class="source">Fonte: SICONFI / Tesouro Nacional — DCA Anexo XI</p>
+  <p class="nota-constitucional">
+    ⚖️ <strong>Piso constitucional:</strong> Municípios devem aplicar mínimo de 15% da receita líquida em Saúde e 25% em Educação.
+  </p>
+</div>
+
+<div class="charts-grid">
+  <div class="chart-card chart-wide">
+    <h2>Distribuição por Função (último ano) <span class="legend-hint">— azul escuro: Saúde, Educação e Urbanismo</span></h2>
+    <app-chart [option]="optionDistribuicao" [loading]="loading" [error]="error" />
+  </div>
+  <div class="chart-card chart-wide">
+    <h2>Evolução — Saúde, Educação e Urbanismo</h2>
+    <app-chart [option]="optionEvolucao" [loading]="loading" [error]="error" />
+  </div>
+</div>

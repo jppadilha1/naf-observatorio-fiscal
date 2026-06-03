@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "municipio": "Varginha",
+    "uf": "MG",
+    "codigo_ibge": "3170701",
+    "fonte": "Dados estimados com base em Censo IBGE 2022, CAGED/MTE e Receita Federal (CNPJ)",
+    "dataAtualizacao": "2025-01-01",
+    "aviso": "Dados mockados — substituir por script de extração em data/scripts/"
+  },
+  "renda": [
+    { "ano": 2018, "rendaPerCapita": 1180 },
+    { "ano": 2019, "rendaPerCapita": 1240 },
+    { "ano": 2020, "rendaPerCapita": 1210 },
+    { "ano": 2021, "rendaPerCapita": 1290 },
+    { "ano": 2022, "rendaPerCapita": 1430 }
+  ],
+  "emprego": [
+    { "ano": 2018, "admissoes": 12400, "desligamentos": 11600, "saldo": 800 },
+    { "ano": 2019, "admissoes": 13100, "desligamentos": 12300, "saldo": 800 },
+    { "ano": 2020, "admissoes": 10200, "desligamentos": 12100, "saldo": -1900 },
+    { "ano": 2021, "admissoes": 14800, "desligamentos": 13200, "saldo": 1600 },
+    { "ano": 2022, "admissoes": 15300, "desligamentos": 13800, "saldo": 1500 }
+  ],
+  "empresas": [
+    { "ano": 2018, "ativas": 8200, "inativas": 2100 },
+    { "ano": 2019, "ativas": 8650, "inativas": 2250 },
+    { "ano": 2020, "ativas": 8300, "inativas": 2600 },
+    { "ano": 2021, "ativas": 9100, "inativas": 2400 },
+    { "ano": 2022, "ativas": 9800, "inativas": 2300 }
+  ]
+}

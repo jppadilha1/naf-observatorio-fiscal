@@ -1,0 +1,99 @@
+.hero {
+  text-align: center;
+  padding: 3rem 1rem 2.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 2.5rem;
+}
+
+.hero-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e3a5f;
+  line-height: 1.2;
+}
+
+.hero-city {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin-top: 0.25rem;
+}
+
+.hero-subtitle {
+  margin-top: 1rem;
+  color: #4b5563;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.dashboards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.dash-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.75rem;
+  border-radius: 1rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 1px solid transparent;
+}
+
+.dash-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card-blue {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.card-green {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.card-amber {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.dash-icon {
+  font-size: 2rem;
+}
+
+.dash-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dash-desc {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.dash-cta {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.sources {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  line-height: 1.8;
+}

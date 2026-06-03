@@ -1,0 +1,16 @@
+<div class="page-header">
+  <h1>Arrecadação e Repasses</h1>
+  <p class="subtitle">Receita própria (IPTU, ISS) versus transferências constitucionais (FPM, ICMS, Fundeb)</p>
+  <p class="source">Fonte: SICONFI / Tesouro Nacional — RREO Anexo 01</p>
+</div>
+
+<div class="charts-grid">
+  <div class="chart-card">
+    <h2>Receita Própria vs. Transferências</h2>
+    <app-chart [option]="optionComparativo" [loading]="loading" [error]="error" />
+  </div>
+  <div class="chart-card">
+    <h2>Composição das Receitas (último ano)</h2>
+    <app-chart [option]="optionComposicao" [loading]="loading" [error]="error" />
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<section class="hero">
+  <h1 class="hero-title">Observatório Fiscal e Econômico</h1>
+  <p class="hero-city">Varginha, Minas Gerais</p>
+  <p class="hero-subtitle">
+    Transparência e inteligência de dados sobre as finanças públicas e a economia do município.
+    Dados extraídos de fontes oficiais brasileiras — Tesouro Nacional (SICONFI) e IBGE.
+  </p>
+</section>
+
+<section class="dashboards-grid">
+  @for (dash of dashboards; track dash.route) {
+    <a [routerLink]="dash.route" class="dash-card {{ dash.color }}">
+      <div class="dash-icon">{{ dash.icon }}</div>
+      <h2 class="dash-title">{{ dash.title }}</h2>
+      <p class="dash-desc">{{ dash.description }}</p>
+      <span class="dash-cta">Ver painel →</span>
+    </a>
+  }
+</section>
+
+<footer class="sources">
+  <p><strong>Fontes:</strong> SICONFI / Tesouro Nacional · IBGE Cidades · Receita Federal · MTE / CAGED</p>
+  <p>Desenvolvido pelo NAF — Núcleo de Apoio Contábil e Fiscal · Varginha (MG)</p>
+</footer>
