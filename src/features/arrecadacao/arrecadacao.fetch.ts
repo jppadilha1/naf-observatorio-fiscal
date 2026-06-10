@@ -1,8 +1,7 @@
-import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { SICONFI_BASE_URL, VARGINHA_IBGE_CODE, ANOS_EXERCICIO } from '../constants';
+import { map, catchError, timeout } from 'rxjs/operators';
+import { ANOS_EXERCICIO, COLUNA_RECEITA_REALIZADA, RECEITAS_COD_CONTA } from '../constants';
 
 export interface ReceitaAnual {
   ano: number;
@@ -17,54 +16,58 @@ export interface ArrecadacaoData {
   series: ReceitaAnual[];
 }
 
-interface RreoItem {
-  an_exercicio: number;
-  no_conta: string;
-  vl_periodo_corrente: number;
+// Item da DCA-Anexo I-C (Receitas Orçamentárias)
+interface DcaReceitaItem {
+  cod_conta: string;
+  conta: string;
+  coluna: string;
+  valor: number;
 }
 
-const CONTA_MAP: Record<string, keyof Omit<ReceitaAnual, 'ano'>> = {
-  'IPTU': 'iptu',
-  'ISSQN': 'iss',
-  'IMPOSTO SOBRE SERVIÇOS DE QUALQUER NATUREZA': 'iss',
-  'IMPOSTO SOBRE A PROPRIEDADE PREDIAL E TERRITORIAL URBANA': 'iptu',
-  'FUNDO DE PARTICIPAÇÃO DOS MUNICÍPIOS': 'fpm',
-  'COTA-PARTE DO ICMS': 'icms',
-  'TRANSFERÊNCIAS DO FUNDEB': 'fundeb',
-};
+// Limite por consulta: evita spinner infinito se a rede travar (ex.: proxy).
+const REQUEST_TIMEOUT_MS = 15000;
 
-function matchConta(noConta: string): keyof Omit<ReceitaAnual, 'ano'> | null {
-  const upper = noConta.toUpperCase();
-  for (const [key, field] of Object.entries(CONTA_MAP)) {
-    if (upper.includes(key)) return field;
-  }
-  return null;
+// URL da DCA-Anexo I-C (Receitas Orçamentárias) de Varginha/MG (id_ente=3170701).
+// URL montada à mão (sem HttpParams): a query fica explícita e o espaço de
+// no_anexo vai codificado como %20, exatamente como a API espera.
+function dcaReceitasUrl(ano: number): string {
+  return `https://apidatalake.tesouro.gov.br/ords/siconfi/tt/dca?an_exercicio=${ano}&no_anexo=DCA-Anexo%20I-C&id_ente=3170701`;
 }
 
-export function fetchArrecadacao(): Observable<ArrecadacaoData> {
-  const http = inject(HttpClient);
+type CampoReceita = keyof Omit<ReceitaAnual, 'ano'>;
 
+// Índice reverso cod_conta → campo, derivado do mapa em constants.
+const CAMPO_POR_COD_CONTA = new Map<string, CampoReceita>(
+  (Object.entries(RECEITAS_COD_CONTA) as [CampoReceita, string][]).map(([campo, cod]) => [cod, campo])
+);
+
+function agregarReceita(ano: number, items: DcaReceitaItem[]): ReceitaAnual {
+  return items
+    .filter((item) => item.coluna === COLUNA_RECEITA_REALIZADA)
+    .reduce<ReceitaAnual>(
+      (acc, item) => {
+        const campo = CAMPO_POR_COD_CONTA.get(item.cod_conta);
+        if (campo && item.valor) {
+          acc[campo] += item.valor;
+        }
+        return acc;
+      },
+      { ano, iptu: 0, iss: 0, fpm: 0, icms: 0, fundeb: 0 }
+    );
+}
+
+export function fetchArrecadacao(http: HttpClient): Observable<ArrecadacaoData> {
+  // Uma requisição por ano de exercício; cada uma já devolve o ReceitaAnual
+  // pronto, então o forkJoin só precisa juntar e ordenar a série.
   const requests = ANOS_EXERCICIO.map((ano) =>
-    http.get<{ items: RreoItem[] }>(
-      `${SICONFI_BASE_URL}/rreo?an_exercicio=${ano}&nr_periodo=6&co_tipo_demonstrativo=RREO&no_anexo=RREO-Anexo%2001&co_esfera=M&co_municipio=${VARGINHA_IBGE_CODE}`
-    )
+    http
+      .get<{ items: DcaReceitaItem[] }>(dcaReceitasUrl(ano))
+      .pipe(map((res) => agregarReceita(ano, res.items ?? [])))
   );
 
   return forkJoin(requests).pipe(
-    map((responses) => {
-      const series: ReceitaAnual[] = ANOS_EXERCICIO.map((ano, idx) => {
-        const items = responses[idx]?.items ?? [];
-        const entry: ReceitaAnual = { ano, iptu: 0, iss: 0, fpm: 0, icms: 0, fundeb: 0 };
-        for (const item of items) {
-          const field = matchConta(item.no_conta ?? '');
-          if (field && item.vl_periodo_corrente) {
-            entry[field] += item.vl_periodo_corrente;
-          }
-        }
-        return entry;
-      });
-      return { series: series.sort((a, b) => a.ano - b.ano) };
-    }),
+    timeout(REQUEST_TIMEOUT_MS),
+    map((series) => ({ series: series.sort((a, b) => a.ano - b.ano) })),
     catchError(() =>
       throwError(() => new Error('Não foi possível carregar os dados de arrecadação. Tente novamente mais tarde.'))
     )

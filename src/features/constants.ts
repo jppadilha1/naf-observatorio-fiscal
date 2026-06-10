@@ -1,30 +1,22 @@
-export const SICONFI_BASE_URL = 'https://apidatalake.tesouro.gov.br/ords/siconfi/tt';
-
-export const VARGINHA_IBGE_CODE = '3170701';
-
+// Anos de exercício consultados na DCA: 5 anos, do mais recente para trás.
+// DCA é anual e publicada no ano seguinte, então começamos em (ano atual - 1).
 const currentYear = new Date().getFullYear();
 export const ANOS_EXERCICIO: number[] = Array.from({ length: 5 }, (_, i) => currentYear - 1 - i);
 
-// Códigos de Anexo do RREO usados para arrecadação
-export const RREO_ANEXO_RECEITAS = '1'; // Anexo 1 — Balanço Orçamentário (Receitas)
+// Colunas (campo `coluna` do item) com os valores que interessam em cada anexo.
+export const COLUNA_RECEITA_REALIZADA = 'Receitas Brutas Realizadas';
+export const COLUNA_DESPESA_LIQUIDADA = 'Despesas Liquidadas';
 
-// Códigos de Anexo do DCA usados para despesas
-export const DCA_ANEXO_DESPESAS = 'DCA-Anexo XI'; // Despesas por Função
+// Receita: campo da série → cod_conta correspondente na DCA-Anexo I-C
+export const RECEITAS_COD_CONTA = {
+  iptu: 'RO1.1.1.2.50.0.0',   // Imposto sobre a Propriedade Predial e Territorial Urbana
+  iss: 'RO1.1.1.4.51.0.0',    // Imposto sobre Serviços de Qualquer Natureza
+  fpm: 'RO1.7.1.1.51.0.0',    // Cota-Parte do Fundo de Participação dos Municípios
+  icms: 'RO1.7.2.1.50.0.0',   // Cota-Parte do ICMS
+  fundeb: 'RO1.7.5.1.00.0.0', // Transferências de Recursos do Fundeb
+} as const;
 
-// Rubricas de receita própria (tributária)
-export const RUBRICAS_RECEITA_PROPRIA = {
-  IPTU: '1.1.1.8.01.1.1', // IPTU — contribuição imobiliária urbana
-  ISS: '1.1.1.8.05.1.1',  // ISS — serviços de qualquer natureza
-};
-
-// Rubricas de transferências
-export const RUBRICAS_TRANSFERENCIAS = {
-  FPM: '1.7.2.8.01.1.1',    // Fundo de Participação dos Municípios
-  ICMS: '1.7.2.8.02.1.1',   // ICMS — cota-parte
-  FUNDEB: '1.7.2.8.05.1.1', // Fundeb — transferências do estado
-};
-
-// Funções orçamentárias de interesse (código → nome)
+// Funções orçamentárias de interesse (código → nome) na DCA-Anexo I-E
 export const FUNCOES_ORCAMENTARIAS: Record<string, string> = {
   '04': 'Administração',
   '08': 'Assistência Social',

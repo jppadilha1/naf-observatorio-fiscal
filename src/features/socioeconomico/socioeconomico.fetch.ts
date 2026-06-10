@@ -1,4 +1,3 @@
-import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -37,9 +36,7 @@ export interface SocioeconomicoData {
   empresas: EmpresasAnual[];
 }
 
-export function fetchSocioeconomico(): Observable<SocioeconomicoData> {
-  const http = inject(HttpClient);
-
+export function fetchSocioeconomico(http: HttpClient): Observable<SocioeconomicoData> {
   return http.get<SocioeconomicoData>('/data/socioeconomico.mock.json').pipe(
     catchError(() =>
       throwError(() => new Error('Não foi possível carregar os dados socioeconômicos. Verifique o arquivo de dados.'))

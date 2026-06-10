@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpClient } from '@angular/common/http';
 import type { EChartsOption } from 'echarts';
 import { ChartComponent } from '../../components/chart/chart.component';
 import { fetchDespesas, type DespesasData } from './despesas.fetch';
@@ -13,20 +15,29 @@ const FUNCOES_DESTAQUE = ['10', '12', '15']; // Saúde, Educação, Urbanismo
   styleUrl: './despesas.component.css',
 })
 export class DespesasComponent implements OnInit {
+  private readonly http = inject(HttpClient);
+  private readonly destroyRef = inject(DestroyRef);
+  // App é zoneless: HTTP async não dispara change detection sozinho.
+  // markForCheck() agenda a atualização da view quando os dados chegam.
+  private readonly cdr = inject(ChangeDetectorRef);
   loading = true;
   error: string | null = null;
   optionDistribuicao: EChartsOption = {};
   optionEvolucao: EChartsOption = {};
 
   ngOnInit() {
-    fetchDespesas().subscribe({
+    fetchDespesas(this.http)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (data) => {
         this.buildCharts(data);
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (err: Error) => {
         this.error = err.message;
         this.loading = false;
+        this.cdr.markForCheck();
       },
     });
   }

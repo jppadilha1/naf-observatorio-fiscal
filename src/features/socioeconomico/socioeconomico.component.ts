@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import type { EChartsOption } from 'echarts';
 import { ChartComponent } from '../../components/chart/chart.component';
 import { fetchSocioeconomico, type SocioeconomicoData } from './socioeconomico.fetch';
@@ -19,6 +21,11 @@ interface Kpi {
   styleUrl: './socioeconomico.component.css',
 })
 export class SocioeconomicoComponent implements OnInit {
+  private readonly http = inject(HttpClient);
+  private readonly destroyRef = inject(DestroyRef);
+  // App é zoneless: HTTP async não dispara change detection sozinho.
+  // markForCheck() agenda a atualização da view quando os dados chegam.
+  private readonly cdr = inject(ChangeDetectorRef);
   loading = true;
   error: string | null = null;
   aviso = '';
@@ -27,16 +34,20 @@ export class SocioeconomicoComponent implements OnInit {
   optionEmprego: EChartsOption = {};
 
   ngOnInit() {
-    fetchSocioeconomico().subscribe({
+    fetchSocioeconomico(this.http)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (data) => {
         this.buildKpis(data);
         this.buildCharts(data);
         this.aviso = data._meta.aviso;
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (err: Error) => {
         this.error = err.message;
         this.loading = false;
+        this.cdr.markForCheck();
       },
     });
   }

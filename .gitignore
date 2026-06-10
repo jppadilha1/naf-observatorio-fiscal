@@ -1,5 +1,7 @@
 # Dependências
 node_modules/
+.claude/
+openspec/
 
 # Build Angular
 dist/

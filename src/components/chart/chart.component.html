@@ -8,5 +8,5 @@
     <p>{{ error }}</p>
   </div>
 } @else {
-  <div echarts [options]="option" [autoResize]="true" class="chart-container"></div>
+  <div echarts [options]="option" [autoResize]="true" (chartInit)="onChartInit($event)" class="chart-container"></div>
 }
