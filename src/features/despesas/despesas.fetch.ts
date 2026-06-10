@@ -29,11 +29,12 @@ interface DcaDespesaItem {
 // Limite por consulta: evita spinner infinito se a rede travar (ex.: proxy).
 const REQUEST_TIMEOUT_MS = 15000;
 
-// URL da DCA-Anexo I-E (Despesas por Função) de Varginha/MG (id_ente=3170701).
-// URL montada à mão (sem HttpParams): a query fica explícita e o espaço de
-// no_anexo vai codificado como %20, exatamente como a API espera.
+// DCA-Anexo I-E (Despesas por Função) de Varginha/MG (id_ente=3170701).
+// URL relativa (mesma origem) → sem CORS no browser. Um proxy repassa para a
+// SICONFI por baixo: dev em proxy.conf.json, prod em vercel.json. Ambos mapeiam
+// /api/siconfi → https://apidatalake.tesouro.gov.br/ords/siconfi/tt.
 function dcaDespesasUrl(ano: number): string {
-  return `https://apidatalake.tesouro.gov.br/ords/siconfi/tt/dca?an_exercicio=${ano}&no_anexo=DCA-Anexo%20I-E&id_ente=3170701`;
+  return `/api/siconfi/dca?an_exercicio=${ano}&no_anexo=DCA-Anexo%20I-E&id_ente=3170701`;
 }
 
 // Linha de função (nível 1): "10 - Saúde". Subfunções têm ponto ("10.301 - ...")

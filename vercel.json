@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/siconfi/:path*",
+      "destination": "https://apidatalake.tesouro.gov.br/ords/siconfi/tt/:path*"
+    }
+  ]
+}

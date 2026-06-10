@@ -1,0 +1,8 @@
+{
+  "/api/siconfi": {
+    "target": "https://apidatalake.tesouro.gov.br",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api/siconfi": "/ords/siconfi/tt" }
+  }
+}
