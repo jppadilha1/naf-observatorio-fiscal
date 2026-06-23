@@ -1,14 +1,8 @@
 <div class="page-header">
   <h1>Indicadores Socioeconômicos</h1>
   <p class="subtitle">Renda, emprego formal e dinâmica empresarial em Varginha</p>
-  <p class="source">Fonte: IBGE Censo 2022 · CAGED/MTE · Receita Federal (CNPJ)</p>
+  <p class="source">Fonte: IBGE SIDRA (PIB per capita · CEMPRE) · Novo CAGED via Base dos Dados</p>
 </div>
-
-@if (aviso) {
-  <div class="aviso-banner">
-    ⚠️ {{ aviso }}
-  </div>
-}
 
 @if (!loading && !error) {
   <div class="kpis-grid">
@@ -17,9 +11,6 @@
         <p class="kpi-label">{{ kpi.label }}</p>
         <p class="kpi-value">{{ kpi.value }}</p>
         <p class="kpi-ano">{{ kpi.unidade }}</p>
-        <p class="kpi-variacao" [class.positivo]="kpi.variacao >= 0" [class.negativo]="kpi.variacao < 0">
-          {{ kpi.variacao >= 0 ? '↑' : '↓' }} {{ kpi.variacao | number:'1.1-1' }}% vs. ano anterior
-        </p>
       </div>
     }
   </div>
@@ -27,11 +18,11 @@
 
 <div class="charts-grid">
   <div class="chart-card">
-    <h2>Empresas Ativas vs. Inativas</h2>
+    <h2>Empresas Ativas (CEMPRE/IBGE)</h2>
     <app-chart [option]="optionEmpresas" [loading]="loading" [error]="error" />
   </div>
   <div class="chart-card">
-    <h2>Movimentação de Emprego Formal (CAGED)</h2>
+    <h2>Movimentação de Emprego Formal (Novo CAGED)</h2>
     <app-chart [option]="optionEmprego" [loading]="loading" [error]="error" />
   </div>
 </div>

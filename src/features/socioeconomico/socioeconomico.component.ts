@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DecimalPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import type { EChartsOption } from 'echarts';
 import { ChartComponent } from '../../components/chart/chart.component';
@@ -16,7 +15,7 @@ interface Kpi {
 @Component({
   selector: 'app-socioeconomico',
   standalone: true,
-  imports: [ChartComponent, DecimalPipe],
+  imports: [ChartComponent],
   templateUrl: './socioeconomico.component.html',
   styleUrl: './socioeconomico.component.css',
 })
@@ -28,7 +27,6 @@ export class SocioeconomicoComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   loading = true;
   error: string | null = null;
-  aviso = '';
   kpis: Kpi[] = [];
   optionEmpresas: EChartsOption = {};
   optionEmprego: EChartsOption = {};
@@ -37,19 +35,18 @@ export class SocioeconomicoComponent implements OnInit {
     fetchSocioeconomico(this.http)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (data) => {
-        this.buildKpis(data);
-        this.buildCharts(data);
-        this.aviso = data._meta.aviso;
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-      error: (err: Error) => {
-        this.error = err.message;
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-    });
+        next: (data) => {
+          this.buildKpis(data);
+          this.buildCharts(data);
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: (err: Error) => {
+          this.error = err.message;
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   private buildKpis(data: SocioeconomicoData) {
@@ -57,23 +54,32 @@ export class SocioeconomicoComponent implements OnInit {
     const empregos = data.emprego;
     const empresas = data.empresas;
 
+    if (rendas.length < 2 || empregos.length < 2 || empresas.length < 2) {
+      this.error = 'Dados insuficientes retornados pelas APIs (verifique o console).';
+      console.error('SIDRA parse result:', { rendas, empresas });
+      return;
+    }
+
     const ultRenda = rendas.at(-1)!;
     const antRenda = rendas.at(-2)!;
-    const varRenda = ((ultRenda.rendaPerCapita - antRenda.rendaPerCapita) / antRenda.rendaPerCapita) * 100;
+    const varRenda =
+      ((ultRenda.rendaPerCapita - antRenda.rendaPerCapita) / antRenda.rendaPerCapita) * 100;
 
     const ultEmprego = empregos.at(-1)!;
     const antEmprego = empregos.at(-2)!;
-    const varSaldo = antEmprego.saldo !== 0
-      ? ((ultEmprego.saldo - antEmprego.saldo) / Math.abs(antEmprego.saldo)) * 100
-      : 100;
+    const varSaldo =
+      antEmprego.saldo !== 0
+        ? ((ultEmprego.saldo - antEmprego.saldo) / Math.abs(antEmprego.saldo)) * 100
+        : 100;
 
     const ultEmpresas = empresas.at(-1)!;
     const antEmpresas = empresas.at(-2)!;
-    const varEmpresas = ((ultEmpresas.ativas - antEmpresas.ativas) / antEmpresas.ativas) * 100;
+    const varEmpresas =
+      ((ultEmpresas.ativas - antEmpresas.ativas) / antEmpresas.ativas) * 100;
 
     this.kpis = [
       {
-        label: 'Renda per capita',
+        label: 'PIB per capita',
         value: `R$ ${ultRenda.rendaPerCapita.toLocaleString('pt-BR')}`,
         variacao: +varRenda.toFixed(1),
         unidade: `${ultRenda.ano}`,
@@ -94,16 +100,18 @@ export class SocioeconomicoComponent implements OnInit {
   }
 
   private buildCharts(data: SocioeconomicoData) {
-    const anos = data.empresas.map((e) => String(e.ano));
-
     this.optionEmpresas = {
       tooltip: { trigger: 'axis' },
-      legend: { data: ['Ativas', 'Inativas'] },
-      xAxis: { type: 'category', data: anos },
+      legend: { data: ['Ativas'] },
+      xAxis: { type: 'category', data: data.empresas.map((e) => String(e.ano)) },
       yAxis: { type: 'value' },
       series: [
-        { name: 'Ativas', type: 'bar', data: data.empresas.map((e) => e.ativas), itemStyle: { color: '#10b981' } },
-        { name: 'Inativas', type: 'bar', data: data.empresas.map((e) => e.inativas), itemStyle: { color: '#f87171' } },
+        {
+          name: 'Ativas',
+          type: 'bar',
+          data: data.empresas.map((e) => e.ativas),
+          itemStyle: { color: '#10b981' },
+        },
       ],
     };
 
@@ -113,8 +121,18 @@ export class SocioeconomicoComponent implements OnInit {
       xAxis: { type: 'category', data: data.emprego.map((e) => String(e.ano)) },
       yAxis: { type: 'value' },
       series: [
-        { name: 'Admissões', type: 'bar', data: data.emprego.map((e) => e.admissoes), itemStyle: { color: '#3b82f6' } },
-        { name: 'Desligamentos', type: 'bar', data: data.emprego.map((e) => e.desligamentos), itemStyle: { color: '#f59e0b' } },
+        {
+          name: 'Admissões',
+          type: 'bar',
+          data: data.emprego.map((e) => e.admissoes),
+          itemStyle: { color: '#3b82f6' },
+        },
+        {
+          name: 'Desligamentos',
+          type: 'bar',
+          data: data.emprego.map((e) => e.desligamentos),
+          itemStyle: { color: '#f59e0b' },
+        },
         {
           name: 'Saldo',
           type: 'line',
