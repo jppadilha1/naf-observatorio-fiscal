@@ -1,7 +1,7 @@
 // Anos de exercício consultados na DCA: 5 anos, do mais recente para trás.
 // DCA é anual e publicada no ano seguinte, então começamos em (ano atual - 1).
 const currentYear = new Date().getFullYear();
-export const ANOS_EXERCICIO: number[] = Array.from({ length: 5 }, (_, i) => currentYear - 1 - i);
+export const ANOS_EXERCICIO: number[] = Array.from({ length: 2 }, (_, i) => currentYear - 4 + i);
 
 // Colunas (campo `coluna` do item) com os valores que interessam em cada anexo.
 export const COLUNA_RECEITA_REALIZADA = 'Receitas Brutas Realizadas';
